@@ -39,6 +39,7 @@
   a { color: inherit; }
 
   .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  @media (max-width: 480px) { .wrap { padding: 0 18px; } }
 
   /* ---------- Background texture ---------- */
   .bg-glow {
@@ -63,23 +64,30 @@
   .nav-inner {
     display: flex; align-items: center; justify-content: space-between;
     height: 72px;
+    gap: 12px;
   }
-  .brand { display: flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem; letter-spacing: 0.01em; }
-  .brand svg { color: var(--red-bright); }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem; letter-spacing: 0.01em; flex-shrink: 0; }
+  .brand svg { color: var(--red-bright); flex-shrink: 0; }
   .nav-links { display: flex; align-items: center; gap: 32px; font-size: 0.92rem; color: var(--rose-muted); }
-  .nav-links a { text-decoration: none; transition: color .2s ease; }
+  .nav-links a { text-decoration: none; transition: color .2s ease; white-space: nowrap; }
   .nav-links a:hover { color: var(--cream); }
   .cart-btn {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
     background: transparent; border: 1px solid var(--hairline); color: var(--cream);
     padding: 9px 16px; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 600;
-    cursor: pointer; transition: border-color .2s ease, background .2s ease;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; white-space: nowrap;
   }
   .cart-btn:hover { border-color: var(--red-bright); background: rgba(255,23,63,0.16); }
   .cart-count {
     background: var(--red-bright); color: var(--cream); font-size: 0.72rem; font-weight: 700;
     min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    padding: 0 4px;
+    padding: 0 4px; flex-shrink: 0;
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .brand { font-size: 1.08rem; }
+    .cart-btn { padding: 9px 12px; }
+    .cart-btn .cart-label { display: none; }
   }
 
   /* ---------- Hero ---------- */
@@ -231,10 +239,11 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 14px; background: rgba(243,230,226,0.04); border: 1px solid var(--hairline); border-radius: 3px;
     font-size: 0.9rem;
+    gap: 10px;
   }
-  .cart-row .name { display: flex; align-items: center; gap: 10px; }
-  .cart-row .name svg { width: 16px; height: 16px; color: var(--red-bright); }
-  .cart-row button { background: none; border: none; color: var(--rose-muted); cursor: pointer; display: flex; }
+  .cart-row .name { display: flex; align-items: center; gap: 10px; min-width: 0; overflow-wrap: anywhere; }
+  .cart-row .name svg { width: 16px; height: 16px; color: var(--red-bright); flex-shrink: 0; }
+  .cart-row button { background: none; border: none; color: var(--rose-muted); cursor: pointer; display: flex; flex-shrink: 0; }
   .cart-row button:hover { color: var(--cream); }
   .cart-total {
     display: flex; justify-content: space-between; align-items: baseline;
@@ -393,7 +402,7 @@
     </nav>
     <button class="cart-btn" id="cartNavBtn">
       <svg data-lucide="shopping-bag" width="17" height="17"></svg>
-      <span>Cart</span>
+      <span class="cart-label">Cart</span>
       <span class="cart-count" id="cartCount">0</span>
     </button>
   </div>
@@ -621,7 +630,7 @@
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/request', {
+      const response = await fetch('https://redroom-backend-1.onrender.com/api/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -670,7 +679,7 @@
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/request', {
+      const response = await fetch('https://redroom-backend-1.onrender.com/api/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -680,11 +689,11 @@
         document.getElementById('resellerForm').classList.add('hide');
         document.getElementById('resellerThanks').classList.add('show');
       } else {
-        alert('Something went wrong. Please try again.');
+        alert('We are feeling the love today! Due to an incredibly high volume of visitors, our platform is running a little slower than usual. We appreciate your patience while we get you through the virtual line!');
       }
     } catch (err) {
       console.error(err);
-      alert('Connection error. Please try again.');
+      alert('We are feeling the love today! Due to an incredibly high volume of visitors, our platform is running a little slower than usual. We appreciate your patience while we get you through the virtual line');
     }
   });
 
