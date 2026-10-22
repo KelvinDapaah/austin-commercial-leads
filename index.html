@@ -533,7 +533,7 @@
       const itemsList = lineItems.map(i => `${i.product} x${i.qty}`).join(', ');
 
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/request', {
+        const res = await fetch('https://redroom-backend.onrender.com', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -623,7 +623,7 @@
       }
 
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/request', {
+        const res = await fetch('https://redroom-backend.onrender.com', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
