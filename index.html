@@ -3,704 +3,654 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Red Room</title>
+<title>redroom.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.462.0/dist/umd/lucide.js"></script>
 <style>
   :root {
-    --black: #050202;
-    --black-2: #0f0304;
-    --black-3: #170406;
-    --maroon: #5a0008;
-    --red: #c40019;
-    --red-bright: #ff173f;
-    --cream: #f3e6e2;
-    --rose-muted: #a08682;
-    --hairline: rgba(255, 60, 80, 0.16);
-    --radius-card: 2px;
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --paper: #f1f0eb;
+    --ink: #181816;
+    --muted: #74746e;
+    --line: rgba(24, 24, 22, 0.17);
+    --accent: #565d42;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
-  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
-    background: var(--black);
-    color: var(--cream);
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 88% 8%, rgba(112, 134, 236, 0.32), transparent 32%),
+      radial-gradient(circle at 8% 25%, rgba(239, 160, 103, 0.28), transparent 29%),
+      radial-gradient(circle at 52% 42%, rgba(180, 121, 200, 0.16), transparent 32%),
+      var(--paper);
+    color: var(--ink);
     font-family: 'Manrope', sans-serif;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
   }
-  ::selection { background: var(--red); color: var(--cream); }
+  a { text-decoration: none; color: inherit; }
+  button { cursor: pointer; background: none; border: none; color: inherit; font: inherit; }
 
-  a { color: inherit; }
+  /* Navigation */
+  .header {
+    position: fixed; z-index: 20; top: 18px; right: 2.5%; left: 2.5%;
+    height: 66px; padding: 0 22px; border: 1px solid rgba(255, 255, 255, 0.52);
+    border-radius: 8px; background: rgba(241, 240, 235, 0.78);
+    box-shadow: 0 8px 28px rgba(28, 28, 25, 0.05);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  }
+  .logo { justify-self: start; font-family: 'Instrument Serif', serif; font-size: 27px; line-height: 1; letter-spacing: -0.035em; }
+  .logo span { color: var(--accent); }
+  .nav { display: flex; align-items: center; gap: 34px; color: #484844; font-size: 12px; }
+  .nav a { transition: opacity 180ms ease; }
+  .nav a:hover { opacity: 0.55; }
+  .header-actions { justify-self: end; display: flex; align-items: center; gap: 8px; }
+  .bag { display: flex; align-items: center; gap: 9px; padding: 8px 0; font-size: 12px; transition: opacity 180ms ease; }
+  .bag:hover { opacity: 0.55; }
+  .menu { display: none; padding: 7px; }
 
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
-  @media (max-width: 480px) { .wrap { padding: 0 18px; } }
-
-  /* ---------- Background texture ---------- */
-  .bg-glow {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 900px 500px at 18% -10%, rgba(196,0,25,0.42), transparent 60%),
-      radial-gradient(ellipse 700px 500px at 100% 30%, rgba(90,0,8,0.5), transparent 55%),
-      radial-gradient(ellipse 900px 600px at 10% 90%, rgba(196,0,25,0.28), transparent 60%);
-  }
-
-  /* ---------- Nav ---------- */
-  header.nav {
-    position: sticky; top: 0; z-index: 40;
-    padding-top: env(safe-area-inset-top, 0px);
-    backdrop-filter: blur(10px);
-    background: rgba(5,2,2,0.78);
-    border-bottom: 1px solid var(--hairline);
-  }
-  .nav-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    height: 72px;
-    gap: 12px;
-  }
-  .brand { display: flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem; letter-spacing: 0.01em; flex-shrink: 0; }
-  .brand svg { color: var(--red-bright); flex-shrink: 0; }
-  .nav-links { display: flex; align-items: center; gap: 32px; font-size: 0.92rem; color: var(--rose-muted); }
-  .nav-links a { text-decoration: none; transition: color .2s ease; white-space: nowrap; }
-  .nav-links a:hover { color: var(--cream); }
-  .cart-btn {
-    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-    background: transparent; border: 1px solid var(--hairline); color: var(--cream);
-    padding: 9px 16px; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 600;
-    cursor: pointer; transition: border-color .2s ease, background .2s ease; white-space: nowrap;
-  }
-  .cart-btn:hover { border-color: var(--red-bright); background: rgba(255,23,63,0.16); }
-  .cart-count {
-    background: var(--red-bright); color: var(--cream); font-size: 0.72rem; font-weight: 700;
-    min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    padding: 0 4px; flex-shrink: 0;
-  }
-  @media (max-width: 640px) {
-    .nav-links { display: none; }
-    .brand { font-size: 1.08rem; }
-    .cart-btn { padding: 9px 12px; }
-    .cart-btn .cart-label { display: none; }
-  }
-
-  /* ---------- Hero ---------- */
+  /* Hero */
   .hero {
-    position: relative; z-index: 1;
-    padding: 108px 0 92px;
-    text-align: center;
+    min-height: 780px; padding: 142px 4.5% 74px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+    align-items: center; gap: 7%;
   }
-  .hero-kicker {
-    color: var(--rose-muted);
-    font-size: 0.98rem;
-    font-style: italic;
-    font-family: 'Fraunces', serif;
-    margin-bottom: 22px;
+  .hero-intro { max-width: 620px; }
+  .kicker { display: block; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+  .hero h1 { font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -0.045em; margin: 26px 0 30px; font-size: clamp(62px, 7vw, 110px); line-height: 0.9; }
+  .hero-intro > p { max-width: 490px; margin: 0; color: #5e5e58; font-size: 14px; line-height: 1.8; }
+  .medical-support {
+    max-width: 490px; margin-top: 24px; padding: 14px 16px;
+    border: 1px solid rgba(86, 93, 66, 0.2); border-radius: 6px;
+    display: flex; flex-direction: column; gap: 5px; background: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 10px 30px rgba(43, 45, 36, 0.04);
   }
-  .hero h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-size: clamp(3.4rem, 9vw, 7.6rem);
-    line-height: 0.96;
-    margin: 0;
-    letter-spacing: -0.01em;
-    text-shadow: 0 0 60px rgba(255,23,63,0.35);
-  }
-  .hero h1 em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--red-bright);
-    animation: pulseGlow 3.6s ease-in-out infinite;
-  }
-  @keyframes pulseGlow {
-    0%, 100% { text-shadow: 0 0 26px rgba(255,23,63,0.55); }
-    50% { text-shadow: 0 0 48px rgba(255,23,63,0.95); }
-  }
-  .hero p {
-    max-width: 480px;
-    margin: 30px auto 0;
-    color: var(--rose-muted);
-    font-size: 1.06rem;
-    line-height: 1.6;
-  }
-  .hero-actions { margin-top: 42px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--red-bright); color: var(--cream); border: none;
-    padding: 15px 30px; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.95rem;
-    border-radius: 999px; cursor: pointer; letter-spacing: 0.01em;
-    box-shadow: 0 0 0 0 rgba(255,23,63,0.65);
-    transition: transform .2s ease, box-shadow .3s ease;
-  }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px -6px rgba(255,23,63,0.75); }
-  .btn-ghost {
-    background: transparent; color: var(--cream); border: 1px solid var(--hairline);
-    padding: 15px 28px; font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 0.95rem;
-    border-radius: 999px; cursor: pointer; transition: border-color .2s ease;
-  }
-  .btn-ghost:hover { border-color: var(--cream); }
+  .medical-support strong { font-size: 11px; font-weight: 600; }
+  .medical-support span { color: #676761; font-size: 11px; line-height: 1.55; }
+  .text-link { display: inline-flex; align-items: center; gap: 26px; margin-top: 38px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font-size: 12px; font-weight: 600; }
+  .text-link svg { transition: transform 180ms ease; }
+  .text-link:hover svg { transform: translateX(4px); }
 
-  .hero-strip {
-    margin-top: 74px; padding-top: 30px; border-top: 1px solid var(--hairline);
-    display: flex; justify-content: center; gap: 52px; flex-wrap: wrap;
+  .hero-image {
+    position: relative; justify-self: end; width: min(100%, 620px); height: 520px; overflow: hidden;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.3), transparent 38%), linear-gradient(125deg, #d9a184 0%, #b8a8c7 46%, #668ca0 100%);
   }
-  .strip-item { display: flex; align-items: center; gap: 10px; color: var(--rose-muted); font-size: 0.88rem; }
-  .strip-item svg { color: var(--red-bright); width: 18px; height: 18px; }
+  .hero-image::before {
+    content: ''; position: absolute; inset: 0; opacity: 0.24;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.25'/%3E%3C/svg%3E");
+  }
+  .hero-image__label { position: absolute; z-index: 2; top: 22px; right: 24px; left: 24px; display: flex; justify-content: space-between; color: rgba(24, 24, 22, 0.68); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .hero-image__subject { position: absolute; inset: 12% 18% -12%; filter: drop-shadow(28px 32px 30px rgba(25, 25, 22, 0.13)); }
+  .subject-head { position: absolute; z-index: 2; top: 4%; left: 38%; width: 24%; aspect-ratio: 0.82; border-radius: 46% 46% 42% 42%; background: linear-gradient(145deg, #786c74, #4e5962); }
+  .subject-body { position: absolute; inset: 27% 0 0; border-radius: 43% 43% 2% 2%; background: linear-gradient(105deg, #3e4e58 0 22%, #536773 23% 52%, #34414a 53%); clip-path: polygon(16% 0, 84% 0, 100% 28%, 84% 43%, 80% 100%, 20% 100%, 16% 43%, 0 28%); }
+  .hero-image__credit { position: absolute; z-index: 2; right: 23px; bottom: 21px; font-family: 'Instrument Serif', serif; font-size: 14px; font-style: italic; }
 
-  /* ---------- Section heading ---------- */
-  .section-head { text-align: center; margin-bottom: 56px; }
-  .section-head h2 {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(2rem, 4vw, 2.9rem);
-    margin: 0 0 14px;
-  }
-  .section-head p { color: var(--rose-muted); max-width: 460px; margin: 0 auto; line-height: 1.6; }
+  .service-strip { margin: 0 4.5% 90px; padding: 25px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); }
+  .service-strip > div { padding: 5px 30px; border-right: 1px solid var(--line); display: grid; grid-template-columns: 25px 1fr; gap: 4px 13px; }
+  .service-strip > div:first-child { padding-left: 0; }
+  .service-strip > div:last-child { border: 0; }
+  .service-strip span { grid-row: 1 / 3; color: #8b8b84; font-size: 9px; }
+  .service-strip strong { font-family: 'Instrument Serif', serif; font-size: 18px; font-weight: 400; }
+  .service-strip small { color: var(--muted); font-size: 9px; }
 
-  /* ---------- Products ---------- */
-  .shop { position: relative; z-index: 1; padding: 60px 0 100px; }
-  .grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
-  }
-  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  .brands { padding: 130px 4.5%; background: radial-gradient(circle at 10% 20%, rgba(94, 79, 151, 0.22), transparent 27%), radial-gradient(circle at 90% 70%, rgba(55, 110, 116, 0.18), transparent 29%), #1d1e24; color: #f1f0eb; }
+  .section-header { max-width: 680px; margin-bottom: 64px; }
+  .brands .kicker { color: #92948b; }
+  .section-header h2 { margin: 18px 0 20px; font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -0.045em; font-size: clamp(50px, 6vw, 82px); line-height: 0.95; }
+  .section-header p { max-width: 530px; margin: 0; color: #aaa9a2; font-size: 13px; line-height: 1.75; }
+  .brand-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 14px; }
+  .brand { transition: transform 220ms ease; }
+  .brand:hover { transform: translateY(-5px); }
+  .brand-image { position: relative; height: clamp(310px, 31vw, 440px); overflow: hidden; }
+  .brand-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 43%); pointer-events: none; transition: opacity 220ms ease; }
+  .brand:hover .brand-image::after { opacity: 0.55; }
+  .brand-image--acw { background: linear-gradient(145deg, #c6c4ed 0%, #818cac 48%, #4d6071 100%); }
+  .brand-image--jil { background: linear-gradient(145deg, #f0d3bb 0%, #d7a697 50%, #9c7886 100%); }
+  .brand-image--legacy { background: linear-gradient(145deg, #d6c884 0%, #9da16e 47%, #5e746b 100%); }
+  .brand-image--stone { background: linear-gradient(145deg, #a6d1cf 0%, #7298a4 48%, #5f617e 100%); }
+  .brand-number, .image-note { position: absolute; z-index: 3; top: 19px; font-size: 9px; letter-spacing: 0.11em; text-transform: uppercase; color: rgba(24, 24, 22, 0.6); }
+  .brand-number { left: 20px; }
+  .image-note { right: 20px; }
+  .product-pack { position: absolute; inset: 22% 19% 13%; filter: drop-shadow(25px 30px 25px rgba(25, 25, 22, 0.15)); transform: perspective(700px) rotateY(-9deg) rotateZ(-2deg); transition: transform 300ms ease; }
+  .brand:hover .product-pack { transform: perspective(700px) rotateY(-3deg) rotateZ(1deg) translateY(-5px); }
+  .pack-edge { position: absolute; top: -10px; right: 4px; left: 4px; height: 11px; background: rgba(255, 255, 255, 0.52); clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%); }
+  .pack-face { position: absolute; inset: 0; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 3px; background: linear-gradient(155deg, rgba(255, 255, 255, 0.45), transparent 42%), rgba(37, 42, 52, 0.8); box-shadow: inset 0 0 45px rgba(255, 255, 255, 0.08); }
+  .pack-face::before { content: ''; position: absolute; width: 72%; aspect-ratio: 1; top: 20%; left: 14%; border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 50%; }
+  .pack-face::after { content: 'REDROOM'; position: absolute; right: 0; bottom: 11%; left: 0; color: rgba(255, 255, 255, 0.8); font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-align: center; }
+  .brand-image--jil .pack-face { background: linear-gradient(155deg, rgba(255, 255, 255, 0.55), transparent 42%), rgba(126, 81, 98, 0.77); }
+  .brand-image--legacy .pack-face { background: linear-gradient(155deg, rgba(255, 255, 255, 0.42), transparent 42%), rgba(75, 91, 54, 0.8); }
+  .brand-image--stone .pack-face { background: linear-gradient(155deg, rgba(255, 255, 255, 0.42), transparent 42%), rgba(55, 72, 96, 0.82); }
+  .brand-meta { min-height: 100px; padding: 17px 2px 12px; display: flex; align-items: start; justify-content: space-between; gap: 12px; border-bottom: 1px solid #41423d; }
+  .brand-label { display: block; margin-bottom: 8px; color: #97978f; font-size: 8px; font-weight: 600; letter-spacing: 0.11em; text-transform: uppercase; }
+  .brand-meta h3 { margin: 0 0 6px; font-family: 'Instrument Serif', serif; font-size: 21px; font-weight: 400; line-height: 1.1; }
+  .brand-meta p { margin: 0; color: #97978f; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .stock { margin-left: 7px; color: #aebd91; }
+  .stock::before { content: ''; display: inline-block; width: 5px; height: 5px; margin: 0 5px 1px 0; border-radius: 50%; background: #9eb277; }
+  .price { flex: 0 0 auto; font-size: 12px; font-weight: 500; }
+  .product-action { display: flex; justify-content: flex-end; padding-top: 10px; }
+  .shop-button { display: flex; align-items: center; gap: 14px; padding: 9px 0; border: 0; border-bottom: 1px solid #5c5c57; color: #cecec7; background: none; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; transition: color 180ms ease, border-color 180ms ease; }
+  .shop-button:hover { color: #fff; border-color: #b8baae; }
+  .shop-button svg { width: 16px; height: 16px; }
 
-  .card {
-    background: linear-gradient(180deg, var(--black-2), var(--black-3));
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    display: flex; flex-direction: column;
-    transition: border-color .25s ease, transform .25s ease;
-  }
-  .card:hover { border-color: rgba(255,23,63,0.8); transform: translateY(-3px); }
+  .approach { min-height: 560px; padding: 120px 7%; display: grid; grid-template-columns: 0.3fr 1.1fr 0.6fr; align-items: center; gap: 6%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.2)), var(--paper); }
+  .approach-index { align-self: start; color: var(--muted); font-size: 10px; letter-spacing: 0.12em; }
+  .approach h2 { margin: 18px 0 0; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: clamp(54px, 6vw, 88px); line-height: 0.95; }
+  .approach > p { color: #5f5f5a; font-family: 'Instrument Serif', serif; font-size: 22px; line-height: 1.5; }
 
-  .card-image {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--black);
-    border-bottom: 1px solid var(--hairline);
-    overflow: hidden;
-  }
-  .product-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform .3s ease;
-  }
-  .card:hover .product-img {
-    transform: scale(1.05);
-  }
-  .card-image svg { display: none; }
-  .card-tag {
-    position: absolute; top: 14px; left: 14px;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
-    background: rgba(5,2,2,0.75); border: 1px solid var(--hairline);
-    padding: 5px 10px; border-radius: 999px; color: var(--rose-muted);
-  }
-  .card-body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
-  .card-body h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.3rem; margin: 0 0 6px; }
-  .card-body .desc { color: var(--rose-muted); font-size: 0.88rem; line-height: 1.55; margin: 0 0 18px; flex: 1; }
-  .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .price { font-family: 'Fraunces', serif; font-size: 1.12rem; }
-  .price span { color: var(--rose-muted); font-size: 0.78rem; font-family: 'Manrope', sans-serif; display: block; }
-  .add-btn {
-    display: flex; align-items: center; gap: 7px;
-    background: transparent; border: 1px solid var(--red-bright); color: var(--cream);
-    padding: 9px 15px; border-radius: 999px; font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 0.84rem;
-    cursor: pointer; transition: background .2s ease;
-  }
-  .add-btn:hover { background: rgba(255,23,63,0.25); }
-  .add-btn svg { width: 15px; height: 15px; }
+  footer { padding: 100px 4.5% 34px; background: #deddd6; }
+  .footer-lead { max-width: 750px; }
+  .footer-lead p { margin: 20px 0 0; font-family: 'Instrument Serif', serif; font-size: clamp(38px, 5vw, 66px); line-height: 1.02; letter-spacing: -0.035em; }
+  .footer-description { display: block; max-width: 530px; margin-top: 22px; color: #62625d; font-size: 12px; line-height: 1.7; }
+  .footer-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .footer-lead .whatsapp-link { gap: 12px; padding: 13px 17px; border-radius: 4px; transition: color 180ms ease, background 180ms ease; border: 1px solid rgba(37, 84, 52, 0.24); background: rgba(72, 125, 81, 0.1); }
+  .footer-lead .whatsapp-link:hover { color: #f4f5ef; background: #315f3c; }
+  .footer-bottom { margin-top: 130px; padding-top: 25px; border-top: 1px solid var(--line); display: flex; align-items: end; justify-content: space-between; }
+  .logo--footer { font-size: 35px; }
+  .footer-bottom > div { display: flex; gap: 45px; color: #686863; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-  /* ---------- Order section ---------- */
-  .order {
-    position: relative; z-index: 1;
-    padding: 20px 0 110px;
-  }
-  .order-panel {
-    background: linear-gradient(150deg, var(--black-2), #1a0708 60%, var(--maroon));
-    border: 1px solid var(--hairline);
-    border-radius: 4px;
-    padding: 52px;
-    display: grid; grid-template-columns: 1fr 1.15fr; gap: 52px;
-  }
-  @media (max-width: 860px) { .order-panel { grid-template-columns: 1fr; padding: 34px 24px; } }
+  .quick-actions { position: fixed; z-index: 30; right: 24px; bottom: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 9px; }
+  .agent-quick, .whatsapp-quick { min-height: 49px; padding: 0 17px 0 19px; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px; display: flex; align-items: center; gap: 16px; color: #f5f5ef; background: rgba(29, 30, 36, 0.9); box-shadow: 0 12px 35px rgba(15, 16, 20, 0.22); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; transition: transform 180ms ease, background 180ms ease; }
+  .whatsapp-quick { background: rgba(49, 95, 60, 0.92); }
+  .agent-quick:hover, .whatsapp-quick:hover { transform: translateY(-3px); }
+  .agent-quick:hover { background: #30382a; }
+  .whatsapp-quick:hover { background: #3b7048; }
+  .agent-quick svg, .whatsapp-quick svg { width: 17px; height: 17px; }
 
-  .order-summary h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.9rem; margin: 0 0 18px; }
-  .order-summary p.lead { color: var(--rose-muted); line-height: 1.6; margin: 0 0 28px; }
-  .cart-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
-  .cart-empty { color: var(--rose-muted); font-size: 0.9rem; font-style: italic; font-family: 'Fraunces', serif; padding: 14px 0; }
-  .cart-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 14px; background: rgba(243,230,226,0.04); border: 1px solid var(--hairline); border-radius: 3px;
-    font-size: 0.9rem;
-    gap: 10px;
-  }
-  .cart-row .name { display: flex; align-items: center; gap: 10px; min-width: 0; overflow-wrap: anywhere; }
-  .cart-row .name svg { width: 16px; height: 16px; color: var(--red-bright); flex-shrink: 0; }
-  .cart-row button { background: none; border: none; color: var(--rose-muted); cursor: pointer; display: flex; flex-shrink: 0; }
-  .cart-row button:hover { color: var(--cream); }
-  .cart-total {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding-top: 16px; border-top: 1px solid var(--hairline);
-    font-family: 'Fraunces', serif; font-size: 1.2rem;
-  }
-  .cart-total span:last-child { color: var(--red-bright); }
+  .bag-toast { position: fixed; z-index: 45; left: 24px; bottom: 24px; min-width: 310px; padding: 14px 15px; border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 7px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; color: #f5f5ef; background: rgba(29, 30, 36, 0.94); box-shadow: 0 16px 45px rgba(14, 15, 19, 0.22); backdrop-filter: blur(14px); opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity 180ms ease, transform 180ms ease; }
+  .bag-toast--show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .bag-toast > span { padding: 5px 7px; border-radius: 3px; color: #dfe8ce; background: rgba(132, 160, 99, 0.2); font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .bag-toast p { margin: 0; font-size: 10px; }
+  .bag-toast button { padding: 5px 0; border: 0; border-bottom: 1px solid #aaa; color: #f5f5ef; background: none; font-size: 9px; }
 
-  .assurance { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; }
-  .assurance-item { display: flex; gap: 10px; align-items: flex-start; color: var(--rose-muted); font-size: 0.85rem; line-height: 1.5; }
-  .assurance-item svg { width: 16px; height: 16px; color: var(--red-bright); flex-shrink: 0; margin-top: 1px; }
+  /* Agent Application Modal */
+  .checkout-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: rgba(12, 13, 17, 0.68); backdrop-filter: blur(10px); padding: 22px; }
+  .agent-application .checkout {
+    width: min(100%, 620px); background: radial-gradient(circle at 95% 0, rgba(158, 171, 235, 0.28), transparent 33%), #f1f0eb;
+    border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 10px; padding: 32px;
+  }
+  .agent-application__intro { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+  .agent-application__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .agent-application__fields { grid-template-columns: 1fr; } }
 
-  form.checkout { display: flex; flex-direction: column; gap: 18px; }
-  .field { display: flex; flex-direction: column; gap: 7px; }
-  .field label { font-size: 0.8rem; color: var(--rose-muted); font-weight: 600; }
-  .field input, .field select, .field textarea {
-    background: transparent; border: none; border-bottom: 1px solid var(--hairline);
-    color: var(--cream); font-family: 'Manrope', sans-serif; font-size: 0.98rem;
-    padding: 9px 2px; outline: none; transition: border-color .2s ease;
-  }
-  .field input::placeholder, .field textarea::placeholder { color: rgba(160,134,130,0.5); }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--red-bright); }
-  .field input:disabled { color: var(--rose-muted); border-color: var(--hairline); cursor: not-allowed; }
-  .field select option { background: var(--black-2); color: var(--cream); }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  @media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
-  textarea { resize: vertical; min-height: 64px; font-family: 'Manrope', sans-serif; }
+  .checkout { width: min(100%, 620px); max-height: calc(100vh - 44px); overflow-y: auto; padding: 32px; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 10px; background: radial-gradient(circle at 95% 0, rgba(158, 171, 235, 0.28), transparent 33%), #f1f0eb; box-shadow: 0 35px 100px rgba(0, 0, 0, 0.28); }
+  .checkout-head { margin-bottom: 26px; display: flex; align-items: start; justify-content: space-between; gap: 24px; }
+  .checkout-head h2 { margin: 8px 0 0; font-family: 'Instrument Serif', serif; font-size: 38px; font-weight: 400; line-height: 1; letter-spacing: -0.035em; }
+  .checkout-close { flex: 0 0 auto; display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: rgba(255, 255, 255, 0.42); }
+  .order-summary { margin-bottom: 24px; padding: 5px 16px; border-radius: 7px; background: rgba(255, 255, 255, 0.45); }
+  .order-line { min-height: 60px; padding: 10px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 25px 1fr auto; align-items: center; gap: 9px; font-size: 12px; }
+  .order-line > span, .order-line small { color: var(--muted); }
+  .order-line div { display: flex; flex-direction: column; gap: 3px; }
+  .order-line strong, .order-line b { font-weight: 600; }
+  .order-total { padding: 15px 0 11px; display: flex; justify-content: space-between; font-size: 13px; }
+  .order-total strong { font-size: 16px; }
+  .checkout-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .checkout-fields label { display: flex; flex-direction: column; gap: 8px; color: #585853; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .checkout-fields input, .checkout-fields select { width: 100%; height: 48px; padding: 0 12px; border: 1px solid rgba(24, 24, 22, 0.2); border-radius: 5px; outline: 0; color: var(--ink); background: rgba(255, 255, 255, 0.62); font-family: 'Manrope', sans-serif; font-size: 13px; text-transform: none; }
+  .checkout-fields input:focus, .checkout-fields select:focus { border-color: #616c49; box-shadow: 0 0 0 3px rgba(97, 108, 73, 0.1); }
+  .privacy-note, .checkout-error { margin: 16px 0; font-size: 10px; line-height: 1.5; }
+  .privacy-note { color: var(--muted); }
+  .checkout-error { color: #9d302e; }
+  .checkout-submit { width: 100%; min-height: 52px; padding: 0 18px; border: 0; border-radius: 5px; display: flex; align-items: center; justify-content: center; gap: 15px; color: #f6f6f0; background: #252b20; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; }
+  .order-confirmation { padding: 32px 0 8px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .empty-bag > svg { width: 38px; height: 38px; color: var(--muted); }
+  .empty-bag h3, .order-confirmation h3 { margin: 18px 0 8px; font-family: 'Instrument Serif', serif; font-size: 27px; font-weight: 400; }
+  .empty-bag p, .order-confirmation p { color: var(--muted); font-size: 12px; }
+  .empty-bag .checkout-submit, .order-confirmation .checkout-submit { margin-top: 26px; }
+  .confirmation-mark { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto; border-radius: 50%; color: #f5f5ef; background: #5e7454; font-size: 20px; }
+  .order-confirmation > div { margin-top: 22px; padding: 16px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; background: rgba(255, 255, 255, 0.48); color: #62625d; font-size: 11px; align-items: center; justify-content: center; text-align: center; }
 
-  /* ---------- Reseller notification ---------- */
-  .reseller-fab {
-    position: fixed;
-    right: 20px;
-    bottom: max(20px, env(safe-area-inset-bottom, 0px));
-    z-index: 50;
-    font-family: 'Manrope', sans-serif;
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 70px; }
+    .hero-image { justify-self: stretch; width: 100%; }
+    .approach { grid-template-columns: 0.2fr 1fr; }
+    .approach > p { grid-column: 2; }
+    .brand-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 50px 14px; }
+    .brand-image { height: min(65vw, 500px); }
   }
-  .reseller-btn {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--black-2); border: 1px solid var(--hairline); color: var(--cream);
-    padding: 11px 16px; border-radius: 999px; font-size: 0.82rem; font-weight: 700;
-    cursor: pointer; box-shadow: 0 6px 24px rgba(0,0,0,0.55);
-    transition: border-color .2s ease, transform .2s ease;
-  }
-  .reseller-btn svg { width: 15px; height: 15px; color: var(--red-bright); }
-  .reseller-btn:hover { border-color: var(--red-bright); transform: translateY(-2px); }
-  .reseller-pop {
-    position: absolute; bottom: 58px; right: 0; width: 250px;
-    background: var(--black-2); border: 1px solid var(--hairline); border-radius: 6px;
-    padding: 18px 16px 16px; display: none;
-    box-shadow: 0 14px 44px rgba(0,0,0,0.6);
-  }
-  .reseller-pop.show { display: block; }
-  .reseller-close {
-    position: absolute; top: 10px; right: 10px; background: none; border: none;
-    color: var(--rose-muted); cursor: pointer; display: flex; padding: 2px;
-  }
-  .reseller-close:hover { color: var(--cream); }
-  .reseller-pop p { font-size: 0.82rem; color: var(--rose-muted); line-height: 1.5; margin: 0 0 14px; padding-right: 14px; }
-  .reseller-pop .field { margin-bottom: 12px; }
-  .reseller-submit {
-    width: 100%; background: var(--red-bright); border: none; color: var(--cream);
-    padding: 10px; border-radius: 999px; font-weight: 700; font-size: 0.84rem; cursor: pointer;
-  }
-  .reseller-thanks { display: none; font-size: 0.82rem; color: var(--red-bright); font-weight: 600; margin-top: 4px; }
-  .reseller-thanks.show { display: block; }
-  .reseller-form.hide { display: none; }
-
-  .submit-btn {
-    margin-top: 8px;
-    display: flex; align-items: center; justify-content: center; gap: 9px;
-    background: var(--red-bright); color: var(--cream); border: none;
-    padding: 16px 20px; border-radius: 999px; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.98rem;
-    cursor: pointer; transition: transform .2s ease, box-shadow .3s ease;
-  }
-  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px -6px rgba(255,23,63,0.75); }
-  .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  .pulse {
-    animation: cardPulse 0.4s ease-out;
-  }
-  @keyframes cardPulse {
-    0% { border-color: var(--hairline); }
-    50% { border-color: var(--red-bright); box-shadow: 0 0 15px rgba(255,23,63,0.4); }
-    100% { border-color: var(--hairline); }
-  }
-  .add-btn.added {
-    background: rgba(255,23,63,0.2);
-    border-color: var(--cream);
-  }
-
-  /* ---------- Success overlay ---------- */
-  .overlay {
-    position: fixed; inset: 0; z-index: 100;
-    display: none;
-    align-items: center; justify-content: center;
-    background: rgba(5,2,2,0.82);
-    backdrop-filter: blur(6px);
-    padding: 24px;
-  }
-  .overlay.show { display: flex; }
-  .overlay-card {
-    background: linear-gradient(160deg, var(--black-2), var(--black-3));
-    border: 1px solid var(--hairline);
-    border-radius: 6px;
-    padding: 40px 36px;
-    max-width: 360px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-  }
-  .overlay-card svg { width: 42px; height: 42px; color: var(--red-bright); margin-bottom: 16px; }
-  .overlay-card h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.5rem; margin: 0 0 10px; }
-  .overlay-card p { color: var(--rose-muted); font-size: 0.92rem; line-height: 1.6; margin: 0 0 26px; }
-  .overlay-btn {
-    background: var(--red-bright); border: none; color: var(--cream);
-    padding: 13px 30px; border-radius: 999px; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.92rem;
-    cursor: pointer; transition: transform .2s ease;
-  }
-  .overlay-btn:hover { transform: translateY(-1px); }
-
-  /* ---------- Footer ---------- */
-  footer {
-    position: relative; z-index: 1;
-    border-top: 1px solid var(--hairline);
-    padding: 40px 0;
-  }
-  .foot-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-  .foot-note { color: var(--rose-muted); font-size: 0.8rem; line-height: 1.6; max-width: 460px; }
-  .foot-brand { display: flex; align-items: center; gap: 8px; font-family: 'Fraunces', serif; color: var(--rose-muted); font-size: 0.95rem; }
-  .foot-brand svg { color: var(--red-bright); width: 16px; height: 16px; }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+  @media (max-width: 680px) {
+    .quick-actions { right: 14px; bottom: 14px; }
+    .checkout-backdrop { padding: 0; place-items: center; }
+    .checkout { width: 100%; max-height: 100vh; padding: 25px 20px; border-radius: 14px 14px 0 0; position: absolute; bottom: 0; left: 0; right: 0; transform: translateY(0); }
+    .checkout-head h2 { font-size: 33px; }
+    .checkout-fields { grid-template-columns: 1fr; gap: 13px; }
+    .service-strip { margin: 0 20px 70px; grid-template-columns: 1fr; }
+    .service-strip > div { padding: 17px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .service-strip > div:last-child { border-bottom: 0; }
+    .bag-toast { right: 14px; bottom: 132px; left: 14px; min-width: 0; }
+    .header { top: 10px; right: 10px; left: 10px; grid-template-columns: 1fr auto; }
+    .nav { position: absolute; top: 74px; right: 0; left: 0; display: none; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 8px; background: rgba(241, 240, 235, 0.95); backdrop-filter: blur(18px); }
+    .nav--open { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+    .nav a { padding: 15px 10px; border-bottom: 1px solid var(--line); }
+    .nav a:last-child { border: 0; }
+    .menu { display: block; }
+    .bag span { display: none; }
+    .hero { min-height: auto; padding: 145px 20px 60px; }
+    .hero h1 { font-size: clamp(57px, 18vw, 82px); }
+    .hero-image { height: 440px; }
+    .brands { padding: 90px 20px; }
+    .brand-list { grid-template-columns: 1fr; gap: 46px; }
+    .brand-image { height: min(112vw, 500px); }
+    .approach { min-height: auto; padding: 90px 20px; grid-template-columns: 1fr; gap: 34px; }
+    .approach > p { grid-column: auto; margin: 0; }
+    footer { padding: 80px 20px 30px; }
+    .footer-bottom { margin-top: 90px; align-items: start; flex-direction: column; gap: 30px; }
+    .footer-bottom > div { flex-direction: column; gap: 7px; }
   }
 </style>
 </head>
 <body>
 
-<div id="successOverlay" class="overlay">
-  <div class="overlay-card">
-    <svg data-lucide="check-circle"></svg>
-    <h3>It's on its way</h3>
-    <p>Your request has been sent. We will contact you shortly to arrange the drop.</p>
-    <button class="overlay-btn" onclick="handleOverlayOk()">OK</button>
-  </div>
+<div id="checkoutOverlay" class="checkout-backdrop" style="display:none">
+  <section class="checkout" role="dialog" aria-modal="true">
+    <div class="checkout-head">
+      <div>
+        <span class="kicker">Discreet checkout</span>
+        <h2 id="checkout-title">Complete your order</h2>
+      </div>
+      <button class="checkout-close" onclick="closeCheckout()">
+        <svg data-lucide="x"></svg>
+      </button>
+    </div>
+
+    <div id="checkoutContent">
+      <!-- Content dynamicallly inserted here -->
+    </div>
+  </section>
 </div>
 
-<div class="bg-glow"></div>
+<div id="agentOverlay" class="checkout-backdrop" style="display:none">
+  <section class="checkout" role="dialog" aria-modal="true">
+    <div class="checkout-head">
+      <div>
+        <span class="kicker">Join the Redroom team</span>
+        <h2 id="agent-title">Be a Redroom agent</h2>
+      </div>
+      <button class="checkout-close" onclick="closeAgent()">
+        <svg data-lucide="x"></svg>
+      </button>
+    </div>
+    <div id="agentContent">
+      <!-- Content dynamically inserted here -->
+    </div>
+  </section>
+</div>
 
-<header class="nav">
-  <div class="wrap nav-inner">
-    <div class="brand"><svg data-lucide="flame" width="22" height="22"></svg> The Red Room</div>
-    <nav class="nav-links">
-      <a href="#shop">Shop</a>
-      <a href="#order">Order</a>
-    </nav>
-    <button class="cart-btn" id="cartNavBtn">
-      <svg data-lucide="shopping-bag" width="17" height="17"></svg>
-      <span class="cart-label">Cart</span>
-      <span class="cart-count" id="cartCount">0</span>
+<div id="bagToast" class="bag-toast">
+  <span>Added</span>
+  <p id="toastText"></p>
+  <button onclick="openCheckout()">View bag</button>
+</div>
+
+<header class="header">
+  <a href="#" class="logo">redroom<span>.</span></a>
+  <nav class="nav" id="mainNav">
+    <a href="#brands">Brands</a>
+    <a href="#approach">Our approach</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="header-actions">
+    <button class="bag" onclick="openCheckout()">
+      <svg data-lucide="shopping-bag"></svg>
+      <span>Bag (<span id="cartCount">0</span>)</span>
+    </button>
+    <button class="menu" onclick="toggleMenu()">
+      <svg id="menuIcon" data-lucide="menu"></svg>
     </button>
   </div>
 </header>
 
-<section class="hero">
-  <div class="wrap">
-    <div class="hero-kicker">Discreet. Untamed. Yours.</div>
-    <h1>Taste something<br><em>wild</em></h1>
-    <p>Four brands, one shelf, stock always shifting — every pack sealed, nothing held back. Straight to UCC, no questions asked.</p>
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="document.getElementById('shop').scrollIntoView()">Enter the collection</button>
-      <button class="btn-ghost" onclick="document.getElementById('order').scrollIntoView()">Go to order</button>
-    </div>
-    <div class="hero-strip">
-      <div class="strip-item"><svg data-lucide="package"></svg> Unmarked packaging</div>
-      <div class="strip-item"><svg data-lucide="shield-check"></svg> Lab-tested, latex certified</div>
-      <div class="strip-item"><svg data-lucide="truck"></svg> Same-day delivery, major cities</div>
-    </div>
-  </div>
-</section>
-
-<section class="shop" id="shop">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>How far do you want to go?</h2>
-      <p>Four brands, one shelf. Stock is random — whatever's in supply is what ships. Every pack sealed, nothing branded on the outside.</p>
-    </div>
-    <div class="grid" id="productGrid"></div>
-  </div>
-</section>
-
-<section class="order" id="order">
-  <div class="wrap">
-    <div class="order-panel">
-      <div class="order-summary">
-        <h2>Finish what you started</h2>
-        <p class="lead">Add what you're craving, then tell us where to bring it. No one else needs to know.</p>
-
-        <div class="cart-list" id="cartList">
-          <div class="cart-empty">Your selection is empty — pick something above.</div>
-        </div>
-
-        <div class="cart-total">
-          <span>Total</span>
-          <span id="cartTotal">GHS 0.00</span>
-        </div>
-
-        <div class="assurance">
-          <div class="assurance-item"><svg data-lucide="lock"></svg> Your details are used only to fulfil this order.</div>
-          <div class="assurance-item"><svg data-lucide="eye-off"></svg> Packaging carries no branding or contents label.</div>
-          <div class="assurance-item"><svg data-lucide="badge-check"></svg> 18+ only — verified at delivery.</div>
-        </div>
+<main>
+  <section class="hero">
+    <div class="hero-intro">
+      <span class="kicker">Discreet essentials for campus life</span>
+      <h1>Protection and support,<br>without the awkward part.</h1>
+      <p>Redroom makes protection easier to access for students. Order with just your phone number, choose a convenient pickup point, and collect discreetly. Simple, private, sorted.</p>
+      <div class="medical-support">
+        <strong>Need medical assistance?</strong>
+        <span>Confidential help is available. We can connect you with qualified sexual-health support when you need it.</span>
       </div>
+      <a href="#brands" class="text-link">
+        Shop protection <svg data-lucide="arrow-right"></svg>
+      </a>
+    </div>
+    <div class="hero-image">
+      <img src="images/red.jpg" alt="Campaign Image" style="width:100%; height:100%; object-fit:cover; position:absolute; z-index:0;">
+      <div class="hero-image__label">
+        <span>Campaign image placeholder</span>
+        <span>Campus launch / 2025</span>
+      </div>
+      <span class="hero-image__credit">Discreet campus pickup</span>
+    </div>
+  </section>
 
-      <div class="order-form">
-        <form class="checkout" id="checkoutForm">
-          <div class="field">
-            <label for="phone">Phone number</label>
-            <input type="tel" id="phone" placeholder="024 000 0000" required>
-          </div>
-          <div class="field">
-            <label for="campus">Campus</label>
-            <select id="campus" required>
-              <option value="UCC" selected>University of Cape Coast (UCC) — Main Campus</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="location">Describe your location</label>
-            <textarea id="location" placeholder="Hall/hostel, room or block, and a landmark — e.g. Casford Hall, Room B12, opposite the basketball court" required></textarea>
-          </div>
-          <button type="submit" class="submit-btn" id="submitBtn">
-            <svg data-lucide="lock" width="16" height="16"></svg>
-            Send it, no questions asked
-          </button>
-        </form>
+  <section class="service-strip">
+    <div><span>01</span><strong>Discreet packaging</strong><small>No labels. No awkward moments.</small></div>
+    <div><span>02</span><strong>Convenient campus pickup</strong><small>Launching at UCC, with more campuses next.</small></div>
+    <div><span>03</span><strong>Confidential support</strong><small>Help when you need it.</small></div>
+  </section>
+
+  <section class="brands" id="brands">
+    <div class="section-header">
+      <span class="kicker">The essentials</span>
+      <h2>Choose what works for you.</h2>
+      <p>Trusted options, clear prices, and no awkward counter conversation. Add what you need and choose your pickup point at checkout.</p>
+    </div>
+    <div class="brand-list" id="brandList"></div>
+  </section>
+
+  <section class="approach" id="approach">
+    <span class="approach-index">R / EDIT</span>
+    <div>
+      <span class="kicker">Our approach</span>
+      <h2>Private by design.</h2>
+    </div>
+    <p>No account. No unnecessary questions. Choose your product, leave a phone number, and select the campus pickup station that works for you.</p>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-lead">
+      <span class="kicker">Redroom on WhatsApp</span>
+      <p>New product alerts. Better sexual wellbeing.</p>
+      <span class="footer-description">Join our channel for first notice of new products, practical sexual-wellbeing advice, and useful updates from Redroom.</span>
+      <div class="footer-actions">
+        <a href="https://whatsapp.com/channel/0029VbE02bT6WaKtGaZ46r2m" target="_blank" class="whatsapp-link">
+          <svg data-lucide="message-circle"></svg> Join the WhatsApp channel <svg data-lucide="arrow-right"></svg>
+        </a>
       </div>
     </div>
-  </div>
-</section>
+    <div class="footer-bottom">
+      <a href="#" class="logo logo--footer">redroom<span>.</span></a>
+      <div>
+        <span>© 2025 Redroom</span>
+      </div>
+    </div>
+  </footer>
+</main>
 
-<footer>
-  <div class="wrap foot-inner">
-    <div class="foot-brand"><svg data-lucide="flame"></svg> The Red Room</div>
-    <div class="foot-note">For adults 18 and over. Store below 30°C, away from direct sunlight. Orders are placed by phone and location only — no accounts, no records kept beyond fulfilling your order.</div>
-  </div>
-</footer>
-
-<div class="reseller-fab" id="resellerFab">
-  <button class="reseller-btn" id="resellerToggle">
-    <svg data-lucide="handshake"></svg> Become a reseller
+<div class="quick-actions">
+  <a href="https://whatsapp.com/channel/0029VbE02bT6WaKtGaZ46r2m" target="_blank" class="whatsapp-quick">
+    <svg data-lucide="message-circle"></svg>
+    <span>Join WhatsApp channel</span>
+  </a>
+  <button onclick="openReseller()" class="agent-quick">
+    <span>Be a Redroom agent</span>
+    <svg data-lucide="arrow-right"></svg>
   </button>
-  <div class="reseller-pop" id="resellerPop">
-    <button class="reseller-close" id="resellerClose" aria-label="Close"><svg data-lucide="x" width="14" height="14"></svg></button>
-    <div class="reseller-form" id="resellerForm">
-      <p>Know your way around UCC? Resell in your hall and earn per pack sold.</p>
-      <div class="field">
-        <label for="resellerPhone">Phone number</label>
-        <input type="tel" id="resellerPhone" placeholder="024 000 0000">
-      </div>
-      <button class="reseller-submit" id="resellerSubmit">Notify me</button>
-    </div>
-    <div class="reseller-thanks" id="resellerThanks">Got it — we'll reach out.</div>
-  </div>
 </div>
 
 <script>
-  const products = [
-    { id: 'kiss', name: 'Kiss Condom', icon: 'heart', desc: 'Sealed pack. Whatever\'s in stock ships — no picking, no promises.', price: 15, pack: 'Pack of 3' },
-    { id: 'dragon', name: 'Dragon Condom', icon: 'flame', desc: 'Sealed pack. Whatever\'s in stock ships — no picking, no promises.', price: 15, pack: 'Pack of 3' },
-    { id: 'ebony', name: 'Ebony Condom', icon: 'moon', desc: 'Sealed pack. Whatever\'s in stock ships — no picking, no promises.', price: 15, pack: 'Pack of 3' },
-    { id: 'durex', name: 'Durex Condom', icon: 'shield-check', desc: 'Sealed pack. Whatever\'s in stock ships — no picking, no promises.', price: 20, pack: 'Pack of 3' },
+  const brands = [
+    { id: 'durex', name: 'Durex', product: 'Extra Safe — 3 pack', price: 28, imageClass: 'brand-image--acw', number: '01', icon: 'shield-check' },
+    { id: 'kiss', name: 'Kiss', product: 'Classic — 3 pack', price: 15, imageClass: 'brand-image--jil', number: '02', icon: 'heart' },
+    { id: 'ebony', name: 'Fiesta', product: 'Strawberry — 3 pack', price: 18, imageClass: 'brand-image--legacy', number: '03', icon: 'sun' },
+    { id: 'dragon', name: 'Rough Rider', product: 'Studded — 3 pack', price: 22, imageClass: 'brand-image--stone', number: '04', icon: 'flame' },
   ];
 
-  const cart = {};
+  const pickupLocations = {
+    'North Campus': ['Science Shuttle Stop', 'Valco Hall Forecourt', 'Sasakawa Centre'],
+    'South Campus': ['Old Site Main Gate', 'Oguaa Hall Forecourt', 'Adehye Hall Junction'],
+    'Amamoma / Kwaprow': ['Amamoma Junction', 'Kwaprow Junction', 'Superannuation Hostel'],
+  };
 
-  function money(n) { return 'GHS ' + n.toFixed(2); }
+  let cart = [];
 
-  function renderProducts() {
-    const grid = document.getElementById('productGrid');
-    grid.innerHTML = products.map(p => `
-      <div class="card">
-        <div class="card-image">
-          <img src="images/${p.id}.jpg" alt="${p.name}" class="product-img">
-        </div>
-        <div class="card-body">
-          <h3>${p.name}</h3>
-          <p class="desc">${p.desc}</p>
-          <div class="card-foot">
-            <div class="price">${money(p.price)}<span>${p.pack}</span></div>
-            <button class="add-btn" data-id="${p.id}">
-              <svg data-lucide="plus"></svg> Add
-            </button>
+  function renderBrands() {
+    const list = document.getElementById('brandList');
+    list.innerHTML = brands.map((b, i) => `
+      <article class="brand">
+        <div class="brand-image ${b.imageClass}">
+          <img src="images/${b.id}.jpg" alt="${b.name}" style="width:100%; height:100%; object-fit:cover; position:absolute; z-index:1;">
+          <span class="brand-number">${b.number}</span>
+          <div class="product-pack">
+            <div class="pack-edge"></div>
+            <div class="pack-face"></div>
           </div>
         </div>
-      </div>
+        <div class="brand-meta">
+          <div>
+            <span class="brand-label">${b.name}</span>
+            <h3>${b.product}</h3>
+            <p>In stock <span class="stock"></span></p>
+          </div>
+          <strong class="price">GH₵${b.price}</strong>
+        </div>
+        <div class="product-action">
+          <button class="shop-button" onclick="addToBag(${i})">
+            Add to bag <svg data-lucide="arrow-right"></svg>
+          </button>
+        </div>
+      </article>
     `).join('');
-    grid.querySelectorAll('.add-btn').forEach(btn => {
-      btn.addEventListener('click', () => addToCart(btn.dataset.id));
-    });
-    if (window.lucide) lucide.createIcons();
+    lucide.createIcons();
   }
 
-  function addToCart(id) {
-    const btn = document.querySelector(`.add-btn[data-id="${id}"]`);
-    const card = btn.closest('.card');
-    
-    // Visual attention: pulse card and change button
-    card.classList.remove('pulse');
-    void card.offsetWidth; // trigger reflow
-    card.classList.add('pulse');
-    
-    const originalText = btn.innerHTML;
-    btn.innerHTML = `<svg data-lucide="check"></svg> Added`;
-    btn.classList.add('added');
-    
-    setTimeout(() => {
-      btn.innerHTML = originalText;
-      btn.classList.remove('added');
-      if (window.lucide) lucide.createIcons();
-    }, 1000);
+  function addToBag(index) {
+    cart.push(index);
+    document.getElementById('cartCount').textContent = cart.length;
 
-    cart[id] = (cart[id] || 0) + 1;
-    renderCart();
+    const toast = document.getElementById('bagToast');
+    document.getElementById('toastText').textContent = `${brands[index].product} added to your bag`;
+    toast.classList.add('bag-toast--show');
+    setTimeout(() => toast.classList.remove('bag-toast--show'), 3000);
   }
 
-  function removeFromCart(id) {
-    delete cart[id];
-    renderCart();
+  function toggleMenu() {
+    const nav = document.getElementById('mainNav');
+    const icon = document.getElementById('menuIcon');
+    nav.classList.toggle('nav--open');
+    const isOpen = nav.classList.contains('nav--open');
+    icon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+    lucide.createIcons();
   }
 
-  function renderCart() {
-    const list = document.getElementById('cartList');
-    const ids = Object.keys(cart);
-    let total = 0;
-    let count = 0;
+  function openCheckout() {
+    document.getElementById('checkoutOverlay').style.display = 'grid';
+    renderCheckout();
+  }
 
-    if (ids.length === 0) {
-      list.innerHTML = '<div class="cart-empty">Your selection is empty — pick something above.</div>';
-    } else {
-      list.innerHTML = ids.map(id => {
-        const p = products.find(x => x.id === id);
-        const qty = cart[id];
-        total += p.price * qty;
-        count += qty;
-        return `
-          <div class="cart-row">
-            <div class="name"><svg data-lucide="${p.icon}"></svg> ${p.name} × ${qty}</div>
-            <div style="display:flex; align-items:center; gap:14px;">
-              <span>${money(p.price * qty)}</span>
-              <button data-id="${id}" class="remove-btn" aria-label="Remove ${p.name}"><svg data-lucide="x" width="15" height="15"></svg></button>
+  function closeCheckout() {
+    document.getElementById('checkoutOverlay').style.display = 'none';
+  }
+
+  function renderCheckout() {
+    const content = document.getElementById('checkoutContent');
+    if (cart.length === 0) {
+      content.innerHTML = `
+        <div class="empty-bag">
+          <svg data-lucide="shopping-bag"></svg>
+          <h3>Your bag is empty</h3>
+          <p>Add a product before starting checkout.</p>
+          <button class="checkout-submit" onclick="closeCheckout()">Continue shopping</button>
+        </div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    const lineItems = brands.map((b, i) => ({
+      ...b,
+      qty: cart.filter(id => id === i).length
+    })).filter(item => item.qty > 0);
+
+    const total = lineItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    content.innerHTML = `
+      <form id="orderForm">
+        <div class="order-summary">
+          ${lineItems.map(item => `
+            <div class="order-line">
+              <span>${item.qty}×</span>
+              <div><strong>${item.product}</strong><small>${item.name}</small></div>
+              <b>GH₵${item.price * item.qty}</b>
             </div>
-          </div>
-        `;
-      }).join('');
-      list.querySelectorAll('.remove-btn').forEach(btn => {
-        btn.addEventListener('click', () => removeFromCart(btn.dataset.id));
-      });
-    }
+          `).join('')}
+          <div class="order-total"><span>Total</span><strong>GH₵${total}</strong></div>
+        </div>
+        <div class="checkout-fields">
+          <label>Phone number
+            <input type="tel" id="phone" placeholder="e.g. 024 000 0000" required>
+          </label>
+          <label>Campus
+            <select id="campus" required>
+              <option value="University of Cape Coast">University of Cape Coast — active</option>
+            </select>
+          </label>
+          <label>Location on campus
+            <select id="locSelect" required onchange="updateStations(this.value)">
+              <option value="">Select a location</option>
+              ${Object.keys(pickupLocations).map(k => `<option value="${k}">${k}</option>`).join('')}
+            </select>
+          </label>
+          <label>Available pickup station
+            <select id="stationSelect" required disabled>
+              <option value="">Choose a location first</option>
+            </select>
+          </label>
+        </div>
+        <p class="privacy-note">Your order is discreet. We only use your number to coordinate this pickup.</p>
+        <button type="submit" class="checkout-submit">
+          Place order · GH₵${total} <svg data-lucide="arrow-right"></svg>
+        </button>
+      </form>
+    `;
+    lucide.createIcons();
 
-    document.getElementById('cartTotal').textContent = money(total);
-    document.getElementById('cartCount').textContent = count;
-    document.getElementById('submitBtn').disabled = ids.length === 0;
-    if (window.lucide) lucide.createIcons();
-  }
+    document.getElementById('orderForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById('phone').value;
+      const campus = document.getElementById('campus').value;
+      const loc = document.getElementById('locSelect').value;
+      const station = document.getElementById('stationSelect').value;
 
-  document.getElementById('cartNavBtn').addEventListener('click', () => {
-    document.getElementById('order').scrollIntoView();
-  });
-
-  document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (Object.keys(cart).length === 0) return;
-
-    const formData = {
-      type: 'order',
-      phone: document.getElementById('phone').value,
-      campus: document.getElementById('campus').value,
-      location: document.getElementById('location').value,
-      items: Object.entries(cart).map(([id, qty]) => {
-        const p = products.find(x => x.id === id);
-        return `${p.name} x${qty}`;
-      }).join(', '),
-      total: document.getElementById('cartTotal').textContent
-    };
-
-    try {
-      const response = await fetch('https://redroom-backend-1.onrender.com/api/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        document.getElementById('successOverlay').classList.add('show');
-      } else {
-        alert('Something went wrong. Please try again.');
+      if (!phone || !loc || !station) {
+        alert('Please fill in all fields');
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      alert('Connection error. Please try again.');
-    }
-  });
 
-  function handleOverlayOk() {
-    document.getElementById('successOverlay').classList.remove('show');
-    resetOrder();
-  }
+      const itemsList = lineItems.map(i => `${i.product} x${i.qty}`).join(', ');
 
-  function resetOrder() {
-    for (let key in cart) delete cart[key];
-    renderCart();
-    document.getElementById('checkoutForm').reset();
-  }
-
-  const resellerPop = document.getElementById('resellerPop');
-  document.getElementById('resellerToggle').addEventListener('click', () => {
-    resellerPop.classList.toggle('show');
-  });
-  document.getElementById('resellerClose').addEventListener('click', () => {
-    resellerPop.classList.remove('show');
-    document.getElementById('resellerForm').classList.remove('hide');
-    document.getElementById('resellerThanks').classList.remove('show');
-    document.getElementById('resellerPhone').value = '';
-  });
-
-  document.getElementById('resellerSubmit').addEventListener('click', async () => {
-    const phone = document.getElementById('resellerPhone').value;
-    if (!phone) return;
-
-    const formData = {
-      type: 'reseller',
-      phone: phone
-    };
-
-    try {
-      const response = await fetch('https://redroom-backend-1.onrender.com/api/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        document.getElementById('resellerForm').classList.add('hide');
-        document.getElementById('resellerThanks').classList.add('show');
-      } else {
-        alert('We are feeling the love today! Due to an incredibly high volume of visitors, our platform is running a little slower than usual. We appreciate your patience while we get you through the virtual line!');
+      try {
+        const res = await fetch('http://127.0.0.1:5000/api/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'order',
+            phone, campus, location: `${loc} - ${station}`, items: itemsList, total: `GH₵${total}`
+          })
+        });
+        if (res.ok) {
+          document.getElementById('checkoutContent').innerHTML = `
+            <div class="order-confirmation">
+              <div class="confirmation-mark">✓</div>
+              <h3>Your pickup is reserved.</h3>
+              <p>We'll contact you on ${phone} with instructions.</p>
+              <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
+              <button class="checkout-submit" onclick="closeCheckout()">Done</button>
+            </div>`;
+          cart = [];
+          document.getElementById('cartCount').textContent = '0';
+        }
+      } catch (err) {
+        alert('Connection error. Please try again.');
       }
-    } catch (err) {
-      console.error(err);
-      alert('We are feeling the love today! Due to an incredibly high volume of visitors, our platform is running a little slower than usual. We appreciate your patience while we get you through the virtual line');
-    }
-  });
+    };
+  }
 
-  renderProducts();
-  renderCart();
-  if (window.lucide) lucide.createIcons();
+  function updateStations(val) {
+    const sel = document.getElementById('stationSelect');
+    sel.innerHTML = '';
+    if (!val) {
+      sel.disabled = true;
+      sel.innerHTML = '<option value="">Choose a location first</option>';
+      return;
+    }
+    sel.disabled = false;
+    sel.innerHTML = '<option value="">Select a pickup station</option>';
+    pickupLocations[val].forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      sel.appendChild(opt);
+    });
+  }
+
+  function openReseller() {
+    document.getElementById('agentOverlay').style.display = 'grid';
+    renderAgentForm();
+  }
+
+  function closeAgent() {
+    document.getElementById('agentOverlay').style.display = 'none';
+  }
+
+  function renderAgentForm() {
+    const content = document.getElementById('agentContent');
+    content.innerHTML = `
+      <form id="agentForm">
+        <p class="agent-application__intro">
+          Interested in representing Redroom on campus? Leave your details and our team will get in touch.
+        </p>
+        <div class="checkout-fields agent-application__fields">
+          <label>Full name
+            <input type="text" id="agentName" placeholder="Your name" required>
+          </label>
+          <label>Age
+            <input type="number" id="agentAge" min="18" max="100" placeholder="18+" required>
+          </label>
+          <label>Phone number
+            <input type="tel" id="agentPhone" placeholder="e.g. 024 000 0000" required>
+          </label>
+        </div>
+        <p class="privacy-note">We'll only use these details to contact you about becoming an agent.</p>
+        <button type="submit" class="checkout-submit">
+          Submit details <svg data-lucide="arrow-right"></svg>
+        </button>
+      </form>
+    `;
+    lucide.createIcons();
+
+    document.getElementById('agentForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('agentName').value;
+      const age = document.getElementById('agentAge').value;
+      const phone = document.getElementById('agentPhone').value;
+
+      if (age < 18) {
+        alert('You must be 18 or older to apply.');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://127.0.0.1:5000/api/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'reseller',
+            phone: phone,
+            name: name,
+            age: age
+          })
+        });
+        if (res.ok) {
+          document.getElementById('agentContent').innerHTML = `
+            <div class="order-confirmation">
+              <span class="confirmation-mark">✓</span>
+              <h3>Thanks, ${name}.</h3>
+              <p>We’ll contact you on ${phone} with the next steps.</p>
+              <button class="checkout-submit" onclick="closeAgent()">Done</button>
+            </div>`;
+          lucide.createIcons();
+        }
+      } catch (err) {
+        alert('Connection error. Please try again.');
+      }
+    };
+  }
+
+  renderBrands();
+  lucide.createIcons();
 </script>
-
 </body>
 </html>
