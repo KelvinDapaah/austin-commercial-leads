@@ -396,7 +396,10 @@
     'Amamoma / Kwaprow': ['Amamoma Junction', 'Kwaprow Junction', 'Superannuation Hostel'],
   };
 
+  const API_URL = 'https://redroom-backend.onrender.com/api/request';
   let cart = [];
+  let orderSubmitInFlight = false;
+  let agentSubmitInFlight = false;
 
   function renderBrands() {
     const list = document.getElementById('brandList');
@@ -518,12 +521,15 @@
     `;
     lucide.createIcons();
 
-    document.getElementById('orderForm').onsubmit = async (e) => {
+    document.getElementById('orderForm').onsubmit = (e) => {
       e.preventDefault();
+      if (orderSubmitInFlight) return;
+
       const phone = document.getElementById('phone').value;
       const campus = document.getElementById('campus').value;
       const loc = document.getElementById('locSelect').value;
       const station = document.getElementById('stationSelect').value;
+      const submitBtn = e.currentTarget.querySelector('button[type="submit"]');
 
       if (!phone || !loc || !station) {
         alert('Please fill in all fields');
@@ -531,31 +537,62 @@
       }
 
       const itemsList = lineItems.map(i => `${i.product} x${i.qty}`).join(', ');
+      const payload = {
+        type: 'order',
+        phone, campus, location: `${loc} - ${station}`, items: itemsList, total: `GH₵${total}`
+      };
+      orderSubmitInFlight = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
 
-      try {
-        const res = await fetch('https://redroom-backend.onrender.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'order',
-            phone, campus, location: `${loc} - ${station}`, items: itemsList, total: `GH₵${total}`
-          })
-        });
-        if (res.ok) {
-          document.getElementById('checkoutContent').innerHTML = `
-            <div class="order-confirmation">
-              <div class="confirmation-mark">✓</div>
-              <h3>Your pickup is reserved.</h3>
-              <p>We'll contact you on ${phone} with instructions.</p>
-              <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
-              <button class="checkout-submit" onclick="closeCheckout()">Done</button>
-            </div>`;
+      document.getElementById('checkoutContent').innerHTML = `
+        <div class="order-confirmation">
+          <div class="confirmation-mark">✓</div>
+          <h3>Your order is queued.</h3>
+          <p id="orderSubmitStatus">Submitting in the background now. You don’t need to wait on this screen.</p>
+          <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
+          <button class="checkout-submit" onclick="closeCheckout()">Done</button>
+        </div>`;
+
+      const slowStatusTimer = setTimeout(() => {
+        const status = document.getElementById('orderSubmitStatus');
+        if (status) {
+          status.textContent = 'Still sending... Render may be waking up from a cold start. We will keep trying in the background.';
+        }
+      }, 8000);
+
+      void (async () => {
+        try {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const responseText = await res.text();
+            throw new Error(`Request failed (${res.status}): ${responseText || 'No response body'}`);
+          }
+          clearTimeout(slowStatusTimer);
           cart = [];
           document.getElementById('cartCount').textContent = '0';
+          const status = document.getElementById('orderSubmitStatus');
+          if (status) {
+            status.textContent = `Your pickup is reserved. We'll contact you on ${phone} with instructions.`;
+          }
+        } catch (err) {
+          clearTimeout(slowStatusTimer);
+          console.error('Order submission failed:', err);
+          document.getElementById('checkoutContent').innerHTML = `
+            <div class="order-confirmation">
+              <div class="confirmation-mark">!</div>
+              <h3>Order not submitted yet.</h3>
+              <p>We couldn’t reach our server. Please retry your order.</p>
+              <button class="checkout-submit" onclick="renderCheckout()">Retry order</button>
+            </div>`;
+        } finally {
+          orderSubmitInFlight = false;
         }
-      } catch (err) {
-        alert('Connection error. Please try again.');
-      }
+      })();
     };
   }
 
@@ -611,41 +648,74 @@
     `;
     lucide.createIcons();
 
-    document.getElementById('agentForm').onsubmit = async (e) => {
+    document.getElementById('agentForm').onsubmit = (e) => {
       e.preventDefault();
+      if (agentSubmitInFlight) return;
+
       const name = document.getElementById('agentName').value;
       const age = document.getElementById('agentAge').value;
       const phone = document.getElementById('agentPhone').value;
+      const submitBtn = e.currentTarget.querySelector('button[type="submit"]');
 
       if (age < 18) {
         alert('You must be 18 or older to apply.');
         return;
       }
+      const payload = {
+        type: 'reseller',
+        phone: phone,
+        name: name,
+        age: age
+      };
+      agentSubmitInFlight = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
 
-      try {
-        const res = await fetch('https://redroom-backend.onrender.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'reseller',
-            phone: phone,
-            name: name,
-            age: age
-          })
-        });
-        if (res.ok) {
+      document.getElementById('agentContent').innerHTML = `
+        <div class="order-confirmation">
+          <span class="confirmation-mark">✓</span>
+          <h3>Application queued, ${name}.</h3>
+          <p id="agentSubmitStatus">Submitting in the background now. You don’t need to wait on this screen.</p>
+          <button class="checkout-submit" onclick="closeAgent()">Done</button>
+        </div>`;
+
+      const slowStatusTimer = setTimeout(() => {
+        const status = document.getElementById('agentSubmitStatus');
+        if (status) {
+          status.textContent = 'Still sending... Render may be waking up from a cold start. We will keep trying in the background.';
+        }
+      }, 8000);
+
+      void (async () => {
+        try {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const responseText = await res.text();
+            throw new Error(`Request failed (${res.status}): ${responseText || 'No response body'}`);
+          }
+          clearTimeout(slowStatusTimer);
+          const status = document.getElementById('agentSubmitStatus');
+          if (status) {
+            status.textContent = `Thanks. We’ll contact you on ${phone} with the next steps.`;
+          }
+        } catch (err) {
+          clearTimeout(slowStatusTimer);
+          console.error('Agent application submission failed:', err);
           document.getElementById('agentContent').innerHTML = `
             <div class="order-confirmation">
-              <span class="confirmation-mark">✓</span>
-              <h3>Thanks, ${name}.</h3>
-              <p>We’ll contact you on ${phone} with the next steps.</p>
-              <button class="checkout-submit" onclick="closeAgent()">Done</button>
+              <span class="confirmation-mark">!</span>
+              <h3>Application not submitted yet.</h3>
+              <p>We couldn’t reach our server. Please retry your application.</p>
+              <button class="checkout-submit" onclick="renderAgentForm()">Retry application</button>
             </div>`;
-          lucide.createIcons();
+        } finally {
+          agentSubmitInFlight = false;
         }
-      } catch (err) {
-        alert('Connection error. Please try again.');
-      }
+      })();
     };
   }
 
