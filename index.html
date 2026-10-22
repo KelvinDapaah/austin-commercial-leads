@@ -383,6 +383,8 @@
 </div>
 
 <script>
+  const API_URL = 'https://redroom-backend.onrender.com/api/request';
+
   const brands = [
     { id: 'durex', name: 'Durex', product: 'Extra Safe — 3 pack', price: 28, imageClass: 'brand-image--acw', number: '01', icon: 'shield-check' },
     { id: 'kiss', name: 'Kiss', product: 'Classic — 3 pack', price: 15, imageClass: 'brand-image--jil', number: '02', icon: 'heart' },
@@ -533,7 +535,7 @@
       const itemsList = lineItems.map(i => `${i.product} x${i.qty}`).join(', ');
 
       try {
-        const res = await fetch('https://redroom-backend.onrender.com', {
+        const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -541,20 +543,25 @@
             phone, campus, location: `${loc} - ${station}`, items: itemsList, total: `GH₵${total}`
           })
         });
-        if (res.ok) {
-          document.getElementById('checkoutContent').innerHTML = `
-            <div class="order-confirmation">
-              <div class="confirmation-mark">✓</div>
-              <h3>Your pickup is reserved.</h3>
-              <p>We'll contact you on ${phone} with instructions.</p>
-              <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
-              <button class="checkout-submit" onclick="closeCheckout()">Done</button>
-            </div>`;
-          cart = [];
-          document.getElementById('cartCount').textContent = '0';
+        const responseBody = await res.text().catch(() => '');
+
+        if (!res.ok) {
+          throw new Error(`Backend returned ${res.status}${responseBody ? `: ${responseBody}` : ''}`);
         }
+
+        document.getElementById('checkoutContent').innerHTML = `
+          <div class="order-confirmation">
+            <div class="confirmation-mark">✓</div>
+            <h3>Your pickup is reserved.</h3>
+            <p>We'll contact you on ${phone} with instructions.</p>
+            <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
+            <button class="checkout-submit" onclick="closeCheckout()">Done</button>
+          </div>`;
+        cart = [];
+        document.getElementById('cartCount').textContent = '0';
       } catch (err) {
-        alert('Connection error. Please try again.');
+        console.error('Order submission failed:', err);
+        alert(`Unable to submit order. ${err.message || 'Please try again.'}`);
       }
     };
   }
@@ -623,7 +630,7 @@
       }
 
       try {
-        const res = await fetch('https://redroom-backend.onrender.com', {
+        const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -633,18 +640,23 @@
             age: age
           })
         });
-        if (res.ok) {
-          document.getElementById('agentContent').innerHTML = `
-            <div class="order-confirmation">
-              <span class="confirmation-mark">✓</span>
-              <h3>Thanks, ${name}.</h3>
-              <p>We’ll contact you on ${phone} with the next steps.</p>
-              <button class="checkout-submit" onclick="closeAgent()">Done</button>
-            </div>`;
-          lucide.createIcons();
+        const responseBody = await res.text().catch(() => '');
+
+        if (!res.ok) {
+          throw new Error(`Backend returned ${res.status}${responseBody ? `: ${responseBody}` : ''}`);
         }
+
+        document.getElementById('agentContent').innerHTML = `
+          <div class="order-confirmation">
+            <span class="confirmation-mark">✓</span>
+            <h3>Thanks, ${name}.</h3>
+            <p>We’ll contact you on ${phone} with the next steps.</p>
+            <button class="checkout-submit" onclick="closeAgent()">Done</button>
+          </div>`;
+        lucide.createIcons();
       } catch (err) {
-        alert('Connection error. Please try again.');
+        console.error('Reseller submission failed:', err);
+        alert(`Unable to submit details. ${err.message || 'Please try again.'}`);
       }
     };
   }
