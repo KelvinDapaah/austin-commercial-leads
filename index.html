@@ -322,7 +322,7 @@
       <img src="images/red.jpg" alt="Campaign Image" style="width:100%; height:100%; object-fit:cover; position:absolute; z-index:0;">
       <div class="hero-image__label">
         <span>Campaign image placeholder</span>
-        <span>Campus launch / 2025</span>
+        <span>Campus launch / 2026</span>
       </div>
       <span class="hero-image__credit">Discreet campus pickup</span>
     </div>
@@ -366,7 +366,7 @@
     <div class="footer-bottom">
       <a href="#" class="logo logo--footer">redroom<span>.</span></a>
       <div>
-        <span>© 2025 Redroom</span>
+        <span>© 2026 Redroom</span>
       </div>
     </div>
   </footer>
@@ -552,7 +552,7 @@
           <h3>Your order is queued.</h3>
           <p id="orderSubmitStatus">Submitting in the background now. After your product is physically delivered, use the Pay after delivery button below.</p>
           <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
-          <a class="checkout-submit" href="https://paystack.shop/pay/redoom" target="_blank" rel="noopener noreferrer">
+          <a class="checkout-submit" href="https://paystack.shop/pay/redroom" target="_blank" rel="noopener noreferrer">
             Pay after delivery
             <svg data-lucide="credit-card"></svg>
           </a>
@@ -563,7 +563,7 @@
       const slowStatusTimer = setTimeout(() => {
         const status = document.getElementById('orderSubmitStatus');
         if (status) {
-          status.textContent = 'Still sending... Render may be waking up from a cold start. We will keep trying in the background.';
+          status.textContent = 'Our Redagents will reach out soon';
         }
       }, 8000);
 
@@ -688,7 +688,7 @@
       const slowStatusTimer = setTimeout(() => {
         const status = document.getElementById('agentSubmitStatus');
         if (status) {
-          status.textContent = 'Still sending... Render may be waking up from a cold start. We will keep trying in the background.';
+          status.textContent = 'Only make payment when product is delivered';
         }
       }, 8000);
 
