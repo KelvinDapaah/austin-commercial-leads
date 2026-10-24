@@ -52,6 +52,12 @@
   .header-actions { justify-self: end; display: flex; align-items: center; gap: 8px; }
   .bag { display: flex; align-items: center; gap: 9px; padding: 8px 0; font-size: 12px; transition: opacity 180ms ease; }
   .bag:hover { opacity: 0.55; }
+  .bag-pay {
+    padding: 8px 10px; border: 1px solid rgba(24, 24, 22, 0.2); border-radius: 999px;
+    font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase;
+    transition: opacity 180ms ease, background 180ms ease;
+  }
+  .bag-pay:hover { opacity: 0.75; background: rgba(255, 255, 255, 0.5); }
   .menu { display: none; padding: 7px; }
 
   /* Hero */
@@ -223,6 +229,7 @@
     .service-strip > div:last-child { border-bottom: 0; }
     .bag-toast { right: 14px; bottom: 132px; left: 14px; min-width: 0; }
     .header { top: 10px; right: 10px; left: 10px; grid-template-columns: 1fr auto; }
+    .bag-pay { padding: 7px 9px; font-size: 9px; }
     .nav { position: absolute; top: 74px; right: 0; left: 0; display: none; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 8px; background: rgba(241, 240, 235, 0.95); backdrop-filter: blur(18px); }
     .nav--open { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
     .nav a { padding: 15px 10px; border-bottom: 1px solid var(--line); }
@@ -294,6 +301,7 @@
     <a href="#contact">Contact</a>
   </nav>
   <div class="header-actions">
+    <a class="bag-pay" href="https://paystack.shop/pay/redoom" target="_blank" rel="noopener noreferrer">Initiate payment</a>
     <button class="bag" onclick="openCheckout()">
       <svg data-lucide="shopping-bag"></svg>
       <span>Bag (<span id="cartCount">0</span>)</span>
