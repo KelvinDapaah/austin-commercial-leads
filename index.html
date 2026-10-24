@@ -194,7 +194,7 @@
   .privacy-note, .checkout-error { margin: 16px 0; font-size: 10px; line-height: 1.5; }
   .privacy-note { color: var(--muted); }
   .checkout-error { color: #9d302e; }
-  .checkout-submit { width: 100%; min-height: 52px; padding: 0 18px; border: 0; border-radius: 5px; display: flex; align-items: center; justify-content: center; gap: 15px; color: #f6f6f0; background: #252b20; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; }
+  .checkout-submit { width: 100%; min-height: 52px; padding: 0 18px; border: 0; border-radius: 5px; display: flex; align-items: center; justify-content: center; gap: 15px; color: #f6f6f0; background: #252b20; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-decoration: none; }
   .order-confirmation { padding: 32px 0 8px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .empty-bag > svg { width: 38px; height: 38px; color: var(--muted); }
   .empty-bag h3, .order-confirmation h3 { margin: 18px 0 8px; font-family: 'Instrument Serif', serif; font-size: 27px; font-weight: 400; }
@@ -549,10 +549,15 @@
         <div class="order-confirmation">
           <div class="confirmation-mark">✓</div>
           <h3>Your order is queued.</h3>
-          <p id="orderSubmitStatus">Submitting in the background now. You don’t need to wait on this screen.</p>
+          <p id="orderSubmitStatus">Submitting in the background now. After your product is physically delivered, use the Pay after delivery button below.</p>
           <div><span>${campus}</span><span>${loc}</span><span>${station}</span></div>
+          <a class="checkout-submit" href="https://paystack.shop/pay/redoom" target="_blank" rel="noopener noreferrer">
+            Pay after delivery
+            <svg data-lucide="credit-card"></svg>
+          </a>
           <button class="checkout-submit" onclick="closeCheckout()">Done</button>
         </div>`;
+      lucide.createIcons();
 
       const slowStatusTimer = setTimeout(() => {
         const status = document.getElementById('orderSubmitStatus');
@@ -577,7 +582,7 @@
           document.getElementById('cartCount').textContent = '0';
           const status = document.getElementById('orderSubmitStatus');
           if (status) {
-            status.textContent = `Your pickup is reserved. We'll contact you on ${phone} with instructions.`;
+            status.textContent = `Your pickup is reserved. We'll contact you on ${phone} with instructions. After your product is physically delivered, use the Pay after delivery button to complete payment.`;
           }
         } catch (err) {
           clearTimeout(slowStatusTimer);
