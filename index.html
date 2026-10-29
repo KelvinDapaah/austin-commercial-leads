@@ -422,10 +422,16 @@
     { id: 'dragon', name: 'Rough Rider', product: 'Studded — 3 pack', price: 22, imageClass: 'brand-image--stone', number: '04', icon: 'flame' },
   ];
 
-  const pickupLocations = {
-    'North Campus': ['Science Shuttle Stop', 'Valco Hall Forecourt', 'Sasakawa Centre'],
-    'South Campus': ['Old Site Main Gate', 'Oguaa Hall Forecourt', 'Adehye Hall Junction'],
-    'Amamoma / Kwaprow': ['Amamoma Junction', 'Kwaprow Junction', 'Superannuation Hostel'],
+  const campusPickupLocations = {
+    'University of Cape Coast': {
+      'North Campus': ['Science Shuttle Stop', 'Valco Hall Forecourt', 'Sasakawa Centre'],
+      'South Campus': ['Old Site Main Gate', 'Oguaa Hall Forecourt', 'Adehye Hall Junction'],
+      'Amamoma / Kwaprow': ['Amamoma Junction', 'Kwaprow Junction', 'Superannuation Hostel'],
+    },
+    'University of Ghana/Legon': {},
+    'KNUST/main campus': {},
+    'Takoradi Technical University': {},
+    'University of Professional Studies, Accra (UPSA)': {},
   };
 
   const API_URL = 'https://redroom-backend.onrender.com/api/request';
@@ -529,7 +535,7 @@
             <input type="tel" id="phone" placeholder="e.g. 024 000 0000" required>
           </label>
           <label>Campus
-            <select id="campus" required>
+            <select id="campus" required onchange="updateCampusLocations(this.value)">
               <option value="University of Cape Coast">University of Cape Coast — active</option>
               <option value="University of Ghana/Legon" disabled>University of Ghana/Legon — inactive</option>
               <option value="KNUST/main campus" disabled>KNUST/main campus — inactive</option>
@@ -538,9 +544,8 @@
             </select>
           </label>
           <label>Location on campus
-            <select id="locSelect" required onchange="updateStations(this.value)">
-              <option value="">Select a location</option>
-              ${Object.keys(pickupLocations).map(k => `<option value="${k}">${k}</option>`).join('')}
+            <select id="locSelect" required onchange="updateStations(this.value)" disabled>
+              <option value="">Select a campus first</option>
             </select>
           </label>
           <label>Available pickup station
@@ -556,6 +561,7 @@
       </form>
     `;
     lucide.createIcons();
+    updateCampusLocations(document.getElementById('campus').value);
 
     document.getElementById('orderForm').onsubmit = (e) => {
       e.preventDefault();
@@ -637,6 +643,32 @@
     };
   }
 
+  function updateCampusLocations(campus) {
+    const locSelect = document.getElementById('locSelect');
+    const stations = document.getElementById('stationSelect');
+    const locations = campusPickupLocations[campus] || {};
+
+    locSelect.innerHTML = '';
+    stations.disabled = true;
+    stations.innerHTML = '<option value="">Choose a location first</option>';
+
+    const locationNames = Object.keys(locations);
+    if (!locationNames.length) {
+      locSelect.disabled = true;
+      locSelect.innerHTML = '<option value="">Locations coming soon</option>';
+      return;
+    }
+
+    locSelect.disabled = false;
+    locSelect.innerHTML = '<option value="">Select a location</option>';
+    locationNames.forEach(location => {
+      const opt = document.createElement('option');
+      opt.value = location;
+      opt.textContent = location;
+      locSelect.appendChild(opt);
+    });
+  }
+
   function updateStations(val) {
     const sel = document.getElementById('stationSelect');
     sel.innerHTML = '';
@@ -647,7 +679,8 @@
     }
     sel.disabled = false;
     sel.innerHTML = '<option value="">Select a pickup station</option>';
-    pickupLocations[val].forEach(s => {
+    const campus = document.getElementById('campus').value;
+    campusPickupLocations[campus][val].forEach(s => {
       const opt = document.createElement('option');
       opt.value = s; opt.textContent = s;
       sel.appendChild(opt);
